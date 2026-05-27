@@ -1,0 +1,674 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>NovaDesk | 생산성 대시보드</title>
+  <style>
+    :root {
+      --bg: #f7f8fb;
+      --surface: #ffffff;
+      --primary: #2563eb;
+      --primary-dark: #1d4ed8;
+      --text: #172033;
+      --muted: #667085;
+      --line: #e5e7eb;
+      --accent: #eef4ff;
+      --shadow: 0 20px 60px rgba(15, 23, 42, 0.08);
+      --radius: 22px;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Noto Sans KR", sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.6;
+    }
+
+    a {
+      color: inherit;
+      text-decoration: none;
+    }
+
+    .container {
+      width: min(1120px, calc(100% - 40px));
+      margin: 0 auto;
+    }
+
+    header {
+      position: sticky;
+      top: 0;
+      z-index: 20;
+      background: rgba(247, 248, 251, 0.82);
+      backdrop-filter: blur(14px);
+      border-bottom: 1px solid rgba(229, 231, 235, 0.8);
+    }
+
+    .nav {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      height: 72px;
+    }
+
+    .logo {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-weight: 800;
+      letter-spacing: -0.03em;
+    }
+
+    .logo-mark {
+      width: 34px;
+      height: 34px;
+      display: grid;
+      place-items: center;
+      border-radius: 11px;
+      background: var(--primary);
+      color: white;
+      font-size: 18px;
+    }
+
+    .nav-links {
+      display: flex;
+      align-items: center;
+      gap: 28px;
+      color: var(--muted);
+      font-size: 15px;
+    }
+
+    .nav-links a:hover {
+      color: var(--text);
+    }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      border: 0;
+      border-radius: 999px;
+      padding: 12px 20px;
+      font-weight: 700;
+      cursor: pointer;
+      transition: 0.2s ease;
+      font-size: 15px;
+    }
+
+    .btn-primary {
+      background: var(--primary);
+      color: white;
+      box-shadow: 0 10px 24px rgba(37, 99, 235, 0.22);
+    }
+
+    .btn-primary:hover {
+      background: var(--primary-dark);
+      transform: translateY(-1px);
+    }
+
+    .btn-ghost {
+      background: white;
+      border: 1px solid var(--line);
+      color: var(--text);
+    }
+
+    .hero {
+      padding: 96px 0 64px;
+    }
+
+    .hero-grid {
+      display: grid;
+      grid-template-columns: 1.04fr 0.96fr;
+      gap: 52px;
+      align-items: center;
+    }
+
+    .eyebrow {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 8px 13px;
+      border-radius: 999px;
+      background: var(--accent);
+      color: var(--primary-dark);
+      font-weight: 700;
+      font-size: 14px;
+      margin-bottom: 22px;
+    }
+
+    h1 {
+      font-size: clamp(42px, 6vw, 68px);
+      line-height: 1.05;
+      letter-spacing: -0.07em;
+      margin-bottom: 22px;
+    }
+
+    .hero p {
+      color: var(--muted);
+      font-size: 18px;
+      max-width: 560px;
+      margin-bottom: 32px;
+    }
+
+    .hero-actions {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+
+    .stats {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 14px;
+      margin-top: 42px;
+    }
+
+    .stat-card {
+      background: white;
+      border: 1px solid var(--line);
+      border-radius: 18px;
+      padding: 18px;
+    }
+
+    .stat-card strong {
+      display: block;
+      font-size: 24px;
+      letter-spacing: -0.04em;
+    }
+
+    .stat-card span {
+      color: var(--muted);
+      font-size: 14px;
+    }
+
+    .dashboard {
+      background: var(--surface);
+      border: 1px solid var(--line);
+      border-radius: 30px;
+      padding: 22px;
+      box-shadow: var(--shadow);
+    }
+
+    .dashboard-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 20px;
+    }
+
+    .window-dots {
+      display: flex;
+      gap: 7px;
+    }
+
+    .dot {
+      width: 11px;
+      height: 11px;
+      border-radius: 50%;
+      background: #d1d5db;
+    }
+
+    .dashboard-title {
+      font-size: 14px;
+      color: var(--muted);
+      font-weight: 700;
+    }
+
+    .chart {
+      height: 210px;
+      display: flex;
+      align-items: flex-end;
+      gap: 12px;
+      padding: 24px;
+      border-radius: 22px;
+      background: linear-gradient(180deg, #f8fbff, #eef4ff);
+      margin-bottom: 16px;
+    }
+
+    .bar {
+      flex: 1;
+      border-radius: 999px 999px 8px 8px;
+      background: linear-gradient(180deg, #60a5fa, #2563eb);
+      min-height: 38px;
+      animation: grow 0.9s ease both;
+    }
+
+    .bar:nth-child(1) { height: 42%; }
+    .bar:nth-child(2) { height: 68%; animation-delay: .05s; }
+    .bar:nth-child(3) { height: 51%; animation-delay: .1s; }
+    .bar:nth-child(4) { height: 82%; animation-delay: .15s; }
+    .bar:nth-child(5) { height: 74%; animation-delay: .2s; }
+    .bar:nth-child(6) { height: 93%; animation-delay: .25s; }
+
+    @keyframes grow {
+      from { transform: scaleY(0.2); opacity: 0.2; transform-origin: bottom; }
+      to { transform: scaleY(1); opacity: 1; transform-origin: bottom; }
+    }
+
+    .task-list {
+      display: grid;
+      gap: 10px;
+    }
+
+    .task {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 14px 16px;
+      border: 1px solid var(--line);
+      border-radius: 16px;
+      background: white;
+      font-size: 14px;
+    }
+
+    .badge {
+      padding: 5px 10px;
+      border-radius: 999px;
+      background: #ecfdf3;
+      color: #027a48;
+      font-size: 12px;
+      font-weight: 800;
+    }
+
+    section {
+      padding: 70px 0;
+    }
+
+    .section-head {
+      max-width: 680px;
+      margin-bottom: 34px;
+    }
+
+    .section-head h2 {
+      font-size: clamp(30px, 4vw, 44px);
+      line-height: 1.15;
+      letter-spacing: -0.055em;
+      margin-bottom: 12px;
+    }
+
+    .section-head p {
+      color: var(--muted);
+      font-size: 17px;
+    }
+
+    .features {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 18px;
+    }
+
+    .feature-card {
+      background: white;
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      padding: 28px;
+      transition: 0.2s ease;
+    }
+
+    .feature-card:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 18px 40px rgba(15, 23, 42, 0.08);
+    }
+
+    .icon {
+      width: 44px;
+      height: 44px;
+      display: grid;
+      place-items: center;
+      border-radius: 15px;
+      background: var(--accent);
+      color: var(--primary);
+      font-size: 22px;
+      margin-bottom: 18px;
+    }
+
+    .feature-card h3 {
+      font-size: 20px;
+      letter-spacing: -0.03em;
+      margin-bottom: 9px;
+    }
+
+    .feature-card p {
+      color: var(--muted);
+      font-size: 15px;
+    }
+
+    .pricing {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 18px;
+      align-items: stretch;
+    }
+
+    .price-card {
+      background: white;
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      padding: 28px;
+    }
+
+    .price-card.featured {
+      border-color: var(--primary);
+      box-shadow: var(--shadow);
+      transform: scale(1.03);
+    }
+
+    .price {
+      font-size: 38px;
+      font-weight: 900;
+      letter-spacing: -0.06em;
+      margin: 18px 0 12px;
+    }
+
+    .price small {
+      color: var(--muted);
+      font-size: 15px;
+      font-weight: 600;
+    }
+
+    .price-card ul {
+      list-style: none;
+      display: grid;
+      gap: 10px;
+      margin: 20px 0 24px;
+      color: var(--muted);
+      font-size: 15px;
+    }
+
+    .price-card li::before {
+      content: "✓";
+      color: var(--primary);
+      font-weight: 900;
+      margin-right: 8px;
+    }
+
+    .cta {
+      background: #111827;
+      color: white;
+      border-radius: 34px;
+      padding: 54px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 32px;
+    }
+
+    .cta h2 {
+      font-size: clamp(30px, 4vw, 46px);
+      line-height: 1.12;
+      letter-spacing: -0.055em;
+      margin-bottom: 10px;
+    }
+
+    .cta p {
+      color: #cbd5e1;
+      max-width: 560px;
+    }
+
+    footer {
+      padding: 34px 0 46px;
+      color: var(--muted);
+      font-size: 14px;
+    }
+
+    .footer-inner {
+      display: flex;
+      justify-content: space-between;
+      gap: 16px;
+      flex-wrap: wrap;
+      border-top: 1px solid var(--line);
+      padding-top: 24px;
+    }
+
+    .mobile-menu {
+      display: none;
+    }
+
+    @media (max-width: 860px) {
+      .hero-grid,
+      .features,
+      .pricing {
+        grid-template-columns: 1fr;
+      }
+
+      .nav-links {
+        display: none;
+      }
+
+      .mobile-menu {
+        display: inline-flex;
+      }
+
+      .stats {
+        grid-template-columns: 1fr;
+      }
+
+      .price-card.featured {
+        transform: none;
+      }
+
+      .cta {
+        flex-direction: column;
+        align-items: flex-start;
+        padding: 34px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="container nav">
+      <a class="logo" href="#">
+        <span class="logo-mark">N</span>
+        <span>NovaDesk</span>
+      </a>
+
+      <nav class="nav-links" aria-label="주요 메뉴">
+        <a href="#features">기능</a>
+        <a href="#pricing">요금제</a>
+        <a href="#contact">문의</a>
+      </nav>
+
+      <button class="btn btn-primary mobile-menu" onclick="toggleMessage()">시작</button>
+      <button class="btn btn-primary nav-links" onclick="toggleMessage()">무료로 시작하기</button>
+    </div>
+  </header>
+
+  <main>
+    <section class="hero">
+      <div class="container hero-grid">
+        <div>
+          <div class="eyebrow">팀 업무를 한 화면에서 관리</div>
+          <h1>작업, 일정, 지표를 연결하는 생산성 대시보드</h1>
+          <p>
+            NovaDesk는 작은 팀이 프로젝트 진행 상황을 빠르게 파악하고,
+            반복 업무를 줄이며, 중요한 의사결정에 집중하도록 돕는 웹 기반 협업 도구입니다.
+          </p>
+          <div class="hero-actions">
+            <button class="btn btn-primary" onclick="toggleMessage()">데모 요청하기</button>
+            <a class="btn btn-ghost" href="#features">기능 살펴보기</a>
+          </div>
+
+          <div class="stats" aria-label="서비스 지표">
+            <div class="stat-card">
+              <strong>38%</strong>
+              <span>업무 추적 시간 감소</span>
+            </div>
+            <div class="stat-card">
+              <strong>12k+</strong>
+              <span>완료된 자동화 작업</span>
+            </div>
+            <div class="stat-card">
+              <strong>4.8/5</strong>
+              <span>사용자 만족도</span>
+            </div>
+          </div>
+        </div>
+
+        <aside class="dashboard" aria-label="대시보드 예시">
+          <div class="dashboard-top">
+            <div class="window-dots">
+              <span class="dot"></span>
+              <span class="dot"></span>
+              <span class="dot"></span>
+            </div>
+            <span class="dashboard-title">Weekly Performance</span>
+          </div>
+
+          <div class="chart" aria-hidden="true">
+            <span class="bar"></span>
+            <span class="bar"></span>
+            <span class="bar"></span>
+            <span class="bar"></span>
+            <span class="bar"></span>
+            <span class="bar"></span>
+          </div>
+
+          <div class="task-list">
+            <div class="task">
+              <span>릴리즈 체크리스트 검토</span>
+              <span class="badge">완료</span>
+            </div>
+            <div class="task">
+              <span>고객 피드백 분류</span>
+              <span class="badge">진행중</span>
+            </div>
+            <div class="task">
+              <span>다음 스프린트 계획</span>
+              <span class="badge">예약</span>
+            </div>
+          </div>
+        </aside>
+      </div>
+    </section>
+
+    <section id="features">
+      <div class="container">
+        <div class="section-head">
+          <h2>필요한 기능만 단정하게 구성했습니다</h2>
+          <p>과한 기능보다 실제 팀 운영에 자주 쓰이는 핵심 흐름을 중심으로 설계했습니다.</p>
+        </div>
+
+        <div class="features">
+          <article class="feature-card">
+            <div class="icon">▦</div>
+            <h3>프로젝트 보드</h3>
+            <p>작업 상태, 담당자, 마감일을 카드 기반으로 관리하고 병목 구간을 빠르게 확인합니다.</p>
+          </article>
+
+          <article class="feature-card">
+            <div class="icon">⌁</div>
+            <h3>업무 자동화</h3>
+            <p>반복 알림, 상태 변경, 보고서 생성을 자동화해 운영 비용을 줄입니다.</p>
+          </article>
+
+          <article class="feature-card">
+            <div class="icon">◌</div>
+            <h3>실시간 리포트</h3>
+            <p>주간 성과, 완료율, 지연 작업을 시각적으로 확인하고 공유할 수 있습니다.</p>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <section id="pricing">
+      <div class="container">
+        <div class="section-head">
+          <h2>팀 규모에 맞는 단순한 요금제</h2>
+          <p>초기 팀부터 성장 중인 조직까지 바로 선택할 수 있도록 구성했습니다.</p>
+        </div>
+
+        <div class="pricing">
+          <article class="price-card">
+            <h3>Starter</h3>
+            <div class="price">₩0 <small>/월</small></div>
+            <p>개인 또는 소규모 테스트용</p>
+            <ul>
+              <li>프로젝트 2개</li>
+              <li>멤버 3명</li>
+              <li>기본 리포트</li>
+            </ul>
+            <button class="btn btn-ghost">선택하기</button>
+          </article>
+
+          <article class="price-card featured">
+            <h3>Team</h3>
+            <div class="price">₩19,000 <small>/월</small></div>
+            <p>대부분의 실무 팀에 적합</p>
+            <ul>
+              <li>프로젝트 무제한</li>
+              <li>멤버 20명</li>
+              <li>자동화 100개</li>
+              <li>고급 리포트</li>
+            </ul>
+            <button class="btn btn-primary">시작하기</button>
+          </article>
+
+          <article class="price-card">
+            <h3>Business</h3>
+            <div class="price">문의 <small>/별도</small></div>
+            <p>보안과 권한 관리가 필요한 조직</p>
+            <ul>
+              <li>전용 워크스페이스</li>
+              <li>SSO 지원</li>
+              <li>우선 지원</li>
+            </ul>
+            <button class="btn btn-ghost">문의하기</button>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <section id="contact">
+      <div class="container">
+        <div class="cta">
+          <div>
+            <h2>팀 운영을 더 가볍게 시작하세요</h2>
+            <p>복잡한 설정 없이 프로젝트 보드, 자동화, 리포트를 한 번에 사용할 수 있습니다.</p>
+          </div>
+          <button class="btn btn-primary" onclick="toggleMessage()">무료 데모 보기</button>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    <div class="container footer-inner">
+      <span>© 2026 NovaDesk. All rights reserved.</span>
+      <span>Privacy · Terms · Contact</span>
+    </div>
+  </footer>
+
+  <script>
+    function toggleMessage() {
+      const existing = document.querySelector(".toast");
+      if (existing) existing.remove();
+
+      const toast = document.createElement("div");
+      toast.className = "toast";
+      toast.textContent = "데모 요청이 접수되었습니다.";
+      toast.style.position = "fixed";
+      toast.style.left = "50%";
+      toast.style.bottom = "28px";
+      toast.style.transform = "translateX(-50%)";
+      toast.style.background = "#111827";
+      toast.style.color = "white";
+      toast.style.padding = "13px 18px";
+      toast.style.borderRadius = "999px";
+      toast.style.boxShadow = "0 12px 36px rgba(0,0,0,.18)";
+      toast.style.zIndex = "100";
+      toast.style.fontWeight = "700";
+      document.body.appendChild(toast);
+
+      setTimeout(() => toast.remove(), 2200);
+    }
+  </script>
+</body>
+</html>
